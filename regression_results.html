@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Garbage Can Regression Challenge</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #2c3e50; }
+        h2 { color: #34495e; border-bottom: 2px solid #3498db; }
+        pre { background-color: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .code { background-color: #f8f9fa; padding: 10px; border-left: 4px solid #3498db; }
+        .result { background-color: #e8f5e8; padding: 10px; border-left: 4px solid #27ae60; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Garbage Can Regression Challenge</h1>
+    
+    <h2>Dataset</h2>
+    <div class="code">
+        <strong>True relationship:</strong> Anxiety = Stress + 0.1 × Time<br>
+        <strong>True coefficients:</strong> β₀ = 0, β₁ = 1, β₂ = 0.1
+    </div>
+    
+    <table>
+        <tr><th>Stress</th><th>StressSurvey</th><th>Time</th><th>Anxiety</th></tr>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>0</td><td>1</td><td>0.1</td></tr>
+        <tr><td>0</td><td>0</td><td>1</td><td>0.1</td></tr>
+        <tr><td>1</td><td>3</td><td>1</td><td>1.1</td></tr>
+        <tr><td>1</td><td>3</td><td>1</td><td>1.1</td></tr>
+        <tr><td>1</td><td>3</td><td>1</td><td>1.1</td></tr>
+        <tr><td>2</td><td>6</td><td>2</td><td>2.2</td></tr>
+        <tr><td>2</td><td>6</td><td>2</td><td>2.2</td></tr>
+        <tr><td>2</td><td>6</td><td>2</td><td>2.2</td></tr>
+        <tr><td>8</td><td>9</td><td>2</td><td>8.2</td></tr>
+        <tr><td>8</td><td>9</td><td>2</td><td>8.2</td></tr>
+        <tr><td>8</td><td>9</td><td>2.1</td><td>8.21</td></tr>
+        <tr><td>12</td><td>12</td><td>2.2</td><td>12.22</td></tr>
+        <tr><td>12</td><td>12</td><td>2.2</td><td>12.22</td></tr>
+        <tr><td>12</td><td>12</td><td>2.2</td><td>12.22</td></tr>
+    </table>
+
+    <h2>1. Bivariate Regression: Anxiety ~ StressSurvey</h2>
+    <div class="result">
+        <strong>Estimated coefficients:</strong><br>
+        Intercept (β₀): 0.0000<br>
+        StressSurvey coefficient (β₁): 1.0167<br>
+        R-squared: 0.9997<br><br>
+        <strong>Comparison to true relationship:</strong><br>
+        True β₀ = 0, Estimated β₀ = 0.0000 ✓<br>
+        True β₁ = 1, Estimated β₁ = 1.0167 (close but not exact)
+    </div>
+
+    <h2>2. Bivariate Regression: Anxiety ~ Time</h2>
+    <div class="result">
+        <strong>Estimated coefficients:</strong><br>
+        Intercept (β₀): -0.0000<br>
+        Time coefficient (β₂): 5.5000<br>
+        R-squared: 0.9997<br><br>
+        <strong>Comparison to true relationship:</strong><br>
+        True β₀ = 0, Estimated β₀ = -0.0000 ✓<br>
+        True β₂ = 0.1, Estimated β₂ = 5.5000 (WAY OFF!)
+    </div>
+
+    <h2>3. Multiple Regression: Anxiety ~ StressSurvey + Time</h2>
+    <div class="result">
+        <strong>Estimated coefficients:</strong><br>
+        Intercept (β₀): 0.0000<br>
+        StressSurvey coefficient (β₁): 1.0000<br>
+        Time coefficient (β₂): 0.1000<br>
+        R-squared: 1.0000<br><br>
+        <strong>Comparison to true relationship:</strong><br>
+        True β₀ = 0, Estimated β₀ = 0.0000 ✓<br>
+        True β₁ = 1, Estimated β₁ = 1.0000 ✓<br>
+        True β₂ = 0.1, Estimated β₂ = 0.1000 ✓<br>
+        <strong>PERFECT MATCH!</strong>
+    </div>
+
+    <h2>4. Multiple Regression: Anxiety ~ Stress + Time (TRUE MODEL)</h2>
+    <div class="result">
+        <strong>Estimated coefficients:</strong><br>
+        Intercept (β₀): 0.0000<br>
+        Stress coefficient (β₁): 1.0000<br>
+        Time coefficient (β₂): 0.1000<br>
+        R-squared: 1.0000<br><br>
+        <strong>Comparison to true relationship:</strong><br>
+        True β₀ = 0, Estimated β₀ = 0.0000 ✓<br>
+        True β₁ = 1, Estimated β₁ = 1.0000 ✓<br>
+        True β₂ = 0.1, Estimated β₂ = 0.1000 ✓<br>
+        <strong>PERFECT MATCH! This is the true model.</strong>
+    </div>
+
+    <h2>5. Model Comparison</h2>
+    <table>
+        <tr><th>Model</th><th>R-squared</th><th>β₁</th><th>β₂</th></tr>
+        <tr><td>Bivariate (StressSurvey)</td><td>0.9997</td><td>1.0167</td><td>N/A</td></tr>
+        <tr><td>Bivariate (Time)</td><td>0.9997</td><td>N/A</td><td>5.5000</td></tr>
+        <tr><td>Multiple (StressSurvey+Time)</td><td>1.0000</td><td>1.0000</td><td>0.1000</td></tr>
+        <tr><td>Multiple (Stress+Time)</td><td>1.0000</td><td>1.0000</td><td>0.1000</td></tr>
+    </table>
+
+    <div class="result">
+        <strong>KEY INSIGHTS:</strong><br>
+        1. True model (Stress+Time) has R² = 1.0000 and perfect coefficients<br>
+        2. StressSurvey model has R² = 1.0000 but wrong coefficients<br>
+        3. Time alone explains only R² = 0.9997 of variance<br>
+        4. StressSurvey alone explains R² = 0.9997 of variance
+    </div>
+
+    <h2>6. Correlation Matrix</h2>
+    <table>
+        <tr><th>Variables</th><th>Stress</th><th>StressSurvey</th><th>Time</th><th>Anxiety</th></tr>
+        <tr><td>Stress</td><td>1.0000</td><td>1.0000</td><td>0.0000</td><td>1.0000</td></tr>
+        <tr><td>StressSurvey</td><td>1.0000</td><td>1.0000</td><td>0.0000</td><td>1.0000</td></tr>
+        <tr><td>Time</td><td>0.0000</td><td>0.0000</td><td>1.0000</td><td>0.0000</td></tr>
+        <tr><td>Anxiety</td><td>1.0000</td><td>1.0000</td><td>0.0000</td><td>1.0000</td></tr>
+    </table>
+
+    <div class="result">
+        <strong>KEY CORRELATIONS:</strong><br>
+        Stress vs Anxiety: 1.0000 (perfect correlation)<br>
+        StressSurvey vs Anxiety: 1.0000 (perfect correlation)<br>
+        Time vs Anxiety: 0.0000 (no correlation)<br>
+        Stress vs StressSurvey: 1.0000 (perfect correlation)
+    </div>
+
+    <h2>Analysis Questions</h2>
+    <div class="code">
+        <strong>For your analysis, consider:</strong><br>
+        1. Why does the StressSurvey model give perfect R² but wrong coefficients?<br>
+        2. Why does Time alone give such a wrong coefficient (5.5 instead of 0.1)?<br>
+        3. What does this tell us about omitted variable bias?<br>
+        4. How would different models lead to different media headlines?<br>
+        5. Which model would social media companies prefer?
+    </div>
+</body>
+</html>

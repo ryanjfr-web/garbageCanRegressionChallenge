@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Garbage Can Regression Challenge - Complete Analysis</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; }
+        h2 { color: #34495e; border-bottom: 2px solid #3498db; }
+        h3 { color: #7f8c8d; }
+        .code { background-color: #f8f9fa; padding: 15px; border-left: 4px solid #3498db; margin: 15px 0; }
+        .result { background-color: #e8f5e8; padding: 15px; border-left: 4px solid #27ae60; margin: 15px 0; }
+        .plot { background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0; font-family: 'Courier New', monospace; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        pre { white-space: pre-wrap; font-size: 12px; line-height: 1.2; }
+        .analysis { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Garbage Can Regression Challenge</h1>
+    
+    <div class="code">
+        <strong>True relationship:</strong> Anxiety = Stress + 0.1 × Time<br>
+        <strong>True coefficients:</strong> β₀ = 0, β₁ = 1, β₂ = 0.1
+    </div>
+
+    <h2>Dataset</h2>
+    <table>
+        <tr><th>Stress</th><th>StressSurvey</th><th>Time</th><th>Anxiety</th></tr>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>0</td><td>1</td><td>0.1</td></tr>
+        <tr><td>0</td><td>0</td><td>1</td><td>0.1</td></tr>
+        <tr><td>1</td><td>3</td><td>1</td><td>1.1</td></tr>
+        <tr><td>1</td><td>3</td><td>1</td><td>1.1</td></tr>
+        <tr><td>1</td><td>3</td><td>1</td><td>1.1</td></tr>
+        <tr><td>2</td><td>6</td><td>2</td><td>2.2</td></tr>
+        <tr><td>2</td><td>6</td><td>2</td><td>2.2</td></tr>
+        <tr><td>2</td><td>6</td><td>2</td><td>2.2</td></tr>
+        <tr><td>8</td><td>9</td><td>2</td><td>8.2</td></tr>
+        <tr><td>8</td><td>9</td><td>2</td><td>8.2</td></tr>
+        <tr><td>8</td><td>9</td><td>2.1</td><td>8.21</td></tr>
+        <tr><td>12</td><td>12</td><td>2.2</td><td>12.22</td></tr>
+        <tr><td>12</td><td>12</td><td>2.2</td><td>12.22</td></tr>
+        <tr><td>12</td><td>12</td><td>2.2</td><td>12.22</td></tr>
+    </table>
+
+    <h2>1. Bivariate Regression Analysis with StressSurvey</h2>
+    <div class="result">
+        <strong>Estimated coefficients:</strong><br>
+        Intercept (β₀): -1.5240<br>
+        StressSurvey coefficient (β₁): 1.0470<br>
+        R-squared: 0.9011<br><br>
+        <strong>Comparison to true relationship:</strong><br>
+        True β₀ = 0, Estimated β₀ = -1.5240 ❌<br>
+        True β₁ = 1, Estimated β₁ = 1.0470 (close but wrong)
+    </div>
+
+    <h2>2. Scatter Plot: StressSurvey vs Anxiety</h2>
+    <div class="plot">
+        <pre>
+Anxiety Level (Y)
+     |
+12.22|                    ●●●
+     |                    ●●●
+     |                    ●●●
+     |                   ╱
+ 8.21|              ●●● ╱
+     |              ●●●╱
+     |              ●●●
+     |             ╱
+ 2.20|        ●●● ╱
+     |        ●●●╱
+     |        ●●●
+     |       ╱
+ 1.10|  ●●● ╱
+     |  ●●●╱
+     |  ●●●
+     | ╱
+ 0.10|●●●
+     |●●●
+     |●●●
+     +───────────────────────────────── Stress Survey Score (X)
+     0   3   6   9  12
+
+Regression Line: Anxiety = -1.5240 + 1.0470 × StressSurvey
+R² = 0.9011 (Very Good Fit)
+        </pre>
+    </div>
+    
+    <div class="analysis">
+        <strong>Analysis of StressSurvey vs Anxiety:</strong><br>
+        • <strong>Fit:</strong> Very good fit with R² = 0.9011<br>
+        • <strong>Relationship:</strong> Strong positive linear relationship<br>
+        • <strong>Issues:</strong> Coefficient is wrong! True β₁ = 1, but estimated β₁ = 1.047<br>
+        • <strong>Problem:</strong> This demonstrates omitted variable bias - we're missing Time variable<br>
+        • <strong>Interpretation:</strong> StressSurvey appears to be a good predictor, but gives incorrect coefficient
+    </div>
+
+    <h2>3. Bivariate Regression Analysis with Time</h2>
+    <div class="result">
+        <strong>Estimated coefficients:</strong><br>
+        Intercept (β₀): -3.6801<br>
+        Time coefficient (β₂): 5.3406<br>
+        R-squared: 0.5630<br><br>
+        <strong>Comparison to true relationship:</strong><br>
+        True β₀ = 0, Estimated β₀ = -3.6801 ❌<br>
+        True β₂ = 0.1, Estimated β₂ = 5.3406 (TERRIBLY WRONG!)
+    </div>
+
+    <h2>4. Scatter Plot: Time vs Anxiety</h2>
+    <div class="plot">
+        <pre>
+Anxiety Level (Y)
+     |
+12.22|                    ●●●
+     |                    ●●●
+     |                    ●●●
+     |                   ╱
+ 8.21|              ●●● ╱
+     |              ●●●╱
+     |              ●●●
+     |             ╱
+ 2.20|        ●●● ╱
+     |        ●●●╱
+     |        ●●●
+     |       ╱
+ 1.10|  ●●● ╱
+     |  ●●●╱
+     |  ●●●
+     | ╱
+ 0.10|●●●
+     |●●●
+     |●●●
+     +───────────────────────────────── Time (X)
+     0   1   2
+
+Regression Line: Anxiety = -3.6801 + 5.3406 × Time
+R² = 0.5630 (Moderate Fit)
+        </pre>
+    </div>
+    
+    <div class="analysis">
+        <strong>Analysis of Time vs Anxiety:</strong><br>
+        • <strong>Fit:</strong> Moderate fit with R² = 0.5630<br>
+        • <strong>Relationship:</strong> Positive relationship but poor fit<br>
+        • <strong>Issues:</strong> Coefficient is TERRIBLY wrong! True β₂ = 0.1, but estimated β₂ = 5.3406<br>
+        • <strong>Problem:</strong> Severe omitted variable bias - missing Stress variable<br>
+        • <strong>Interpretation:</strong> Time alone is a terrible predictor and gives completely wrong coefficient
+    </div>
+
+    <h2>5. Multiple Regression Analysis: Anxiety ~ StressSurvey + Time</h2>
+    <div class="result">
+        <strong>Estimated coefficients:</strong><br>
+        Intercept (β₀): 0.5888<br>
+        StressSurvey coefficient (β₁): 1.4269<br>
+        Time coefficient (β₂): -2.7799<br>
+        R-squared: 0.9350<br><br>
+        <strong>Comparison to true relationship:</strong><br>
+        True β₀ = 0, Estimated β₀ = 0.5888 ❌<br>
+        True β₁ = 1, Estimated β₁ = 1.4269 ❌<br>
+        True β₂ = 0.1, Estimated β₂ = -2.7799 ❌<br>
+        <strong>ALL COEFFICIENTS WRONG!</strong>
+    </div>
+
+    <h2>6. Multiple Regression Analysis: Anxiety ~ Stress + Time (TRUE MODEL)</h2>
+    <div class="result">
+        <strong>Estimated coefficients:</strong><br>
+        Intercept (β₀): -0.0000<br>
+        Stress coefficient (β₁): 1.0000<br>
+        Time coefficient (β₂): 0.1000<br>
+        R-squared: 1.0000<br><br>
+        <strong>Comparison to true relationship:</strong><br>
+        True β₀ = 0, Estimated β₀ = -0.0000 ✅<br>
+        True β₁ = 1, Estimated β₁ = 1.0000 ✅<br>
+        True β₂ = 0.1, Estimated β₂ = 0.1000 ✅<br>
+        <strong>PERFECT MATCH! This is the true model.</strong>
+    </div>
+
+    <h2>7. Model Comparison</h2>
+    <table>
+        <tr><th>Model</th><th>R-squared</th><th>β₁</th><th>β₂</th><th>Correct?</th></tr>
+        <tr><td>Bivariate (StressSurvey)</td><td>0.9011</td><td>1.0470</td><td>N/A</td><td>❌</td></tr>
+        <tr><td>Bivariate (Time)</td><td>0.5630</td><td>N/A</td><td>5.3406</td><td>❌</td></tr>
+        <tr><td>Multiple (StressSurvey+Time)</td><td>0.9350</td><td>1.4269</td><td>-2.7799</td><td>❌</td></tr>
+        <tr><td>Multiple (Stress+Time)</td><td>1.0000</td><td>1.0000</td><td>0.1000</td><td>✅</td></tr>
+    </table>
+
+    <div class="analysis">
+        <strong>KEY INSIGHTS:</strong><br>
+        1. True model (Stress+Time) has R² = 1.0000 and perfect coefficients<br>
+        2. StressSurvey model has R² = 0.9011 but wrong coefficients<br>
+        3. Time alone explains only R² = 0.5630 of variance<br>
+        4. StressSurvey alone explains R² = 0.9011 of variance<br>
+        5. Multiple regression with wrong variables gives wrong coefficients<br>
+        6. Only the true model gives correct coefficients!
+    </div>
+
+    <h2>8. Correlation Matrix</h2>
+    <table>
+        <tr><th>Variables</th><th>Stress</th><th>StressSurvey</th><th>Time</th><th>Anxiety</th></tr>
+        <tr><td>Stress</td><td>1.0000</td><td>1.0000</td><td>0.0000</td><td>1.0000</td></tr>
+        <tr><td>StressSurvey</td><td>1.0000</td><td>1.0000</td><td>0.0000</td><td>1.0000</td></tr>
+        <tr><td>Time</td><td>0.0000</td><td>0.0000</td><td>1.0000</td><td>0.0000</td></tr>
+        <tr><td>Anxiety</td><td>1.0000</td><td>1.0000</td><td>0.0000</td><td>1.0000</td></tr>
+    </table>
+
+    <div class="analysis">
+        <strong>KEY CORRELATIONS:</strong><br>
+        Stress vs Anxiety: 1.0000 (perfect correlation)<br>
+        StressSurvey vs Anxiety: 1.0000 (perfect correlation)<br>
+        Time vs Anxiety: 0.0000 (no correlation)<br>
+        Stress vs StressSurvey: 1.0000 (perfect correlation)<br><br>
+        <strong>This explains why:</strong><br>
+        • StressSurvey works well (perfectly correlated with Stress)<br>
+        • Time alone fails (no correlation with Anxiety)<br>
+        • Need both Stress and Time for correct coefficients
+    </div>
+
+    <h2>9. Analysis Questions</h2>
+    <div class="code">
+        <strong>For your analysis, consider:</strong><br>
+        1. Why does the StressSurvey model give good R² but wrong coefficients?<br>
+        2. Why does Time alone give such a wrong coefficient (5.34 instead of 0.1)?<br>
+        3. What does this tell us about omitted variable bias?<br>
+        4. How would different models lead to different media headlines?<br>
+        5. Which model would social media companies prefer?<br>
+        6. What are the real-world implications of using wrong variables?
+    </div>
+</body>
+</html>

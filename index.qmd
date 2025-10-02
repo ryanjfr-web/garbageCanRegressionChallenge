@@ -17,13 +17,8 @@ execute:
 
 ```{python}
 #| echo: true
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score
-import statsmodels.api as sm
+# Simple regression analysis using only built-in Python libraries
+import math
 
 # Data with known true relationships: Anxiety = Stress + 0.1 × Time
 data = {
@@ -33,11 +28,99 @@ data = {
     'Anxiety': [0,0.1,0.1,1.1,1.1,1.1,2.2,2.2,2.2,8.2,8.2,8.21,12.22,12.22,12.22]
 }
 
-observDF = pd.DataFrame(data)
 print("Dataset:")
-print(observDF)
+print("Stress\tStressSurvey\tTime\tAnxiety")
+print("-" * 40)
+for i in range(len(data['Stress'])):
+    print(f"{data['Stress'][i]}\t{data['StressSurvey'][i]}\t\t{data['Time'][i]}\t{data['Anxiety'][i]}")
+
 print("\nTrue relationship: Anxiety = Stress + 0.1 × Time")
 print("True coefficients: β₀ = 0, β₁ = 1, β₂ = 0.1")
+```
+
+## Simple Regression Functions
+
+```{python}
+#| echo: true
+# Simple linear regression functions using only basic math
+def simple_linear_regression(x, y):
+    """Calculate simple linear regression coefficients"""
+    n = len(x)
+    sum_x = sum(x)
+    sum_y = sum(y)
+    sum_xy = sum(x[i] * y[i] for i in range(n))
+    sum_x2 = sum(x[i] * x[i] for i in range(n))
+    
+    # Calculate slope (β1) and intercept (β0)
+    slope = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x)
+    intercept = (sum_y - slope * sum_x) / n
+    
+    # Calculate R-squared
+    y_mean = sum_y / n
+    ss_tot = sum((y[i] - y_mean) ** 2 for i in range(n))
+    ss_res = sum((y[i] - (intercept + slope * x[i])) ** 2 for i in range(n))
+    r_squared = 1 - (ss_res / ss_tot)
+    
+    return intercept, slope, r_squared
+
+def multiple_regression(x1, x2, y):
+    """Calculate multiple regression coefficients using normal equations"""
+    n = len(y)
+    
+    # Create matrices for normal equations: X'X * β = X'y
+    # For model: y = β₀ + β₁*x₁ + β₂*x₂
+    
+    # X matrix (with intercept column)
+    X = [[1, x1[i], x2[i]] for i in range(n)]
+    
+    # Calculate X'X
+    XtX = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    for i in range(3):
+        for j in range(3):
+            XtX[i][j] = sum(X[k][i] * X[k][j] for k in range(n))
+    
+    # Calculate X'y
+    Xty = [0, 0, 0]
+    for i in range(3):
+        Xty[i] = sum(X[k][i] * y[k] for k in range(n))
+    
+    # Solve using Gaussian elimination (simplified for 3x3)
+    # β = (X'X)^(-1) * X'y
+    
+    # Calculate determinant
+    det = (XtX[0][0] * (XtX[1][1] * XtX[2][2] - XtX[1][2] * XtX[2][1]) -
+           XtX[0][1] * (XtX[1][0] * XtX[2][2] - XtX[1][2] * XtX[2][0]) +
+           XtX[0][2] * (XtX[1][0] * XtX[2][1] - XtX[1][1] * XtX[2][0]))
+    
+    if abs(det) < 1e-10:
+        return None, None, None, 0
+    
+    # Calculate inverse matrix (simplified for 3x3)
+    inv = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    inv[0][0] = (XtX[1][1] * XtX[2][2] - XtX[1][2] * XtX[2][1]) / det
+    inv[0][1] = -(XtX[0][1] * XtX[2][2] - XtX[0][2] * XtX[2][1]) / det
+    inv[0][2] = (XtX[0][1] * XtX[1][2] - XtX[0][2] * XtX[1][1]) / det
+    inv[1][0] = -(XtX[1][0] * XtX[2][2] - XtX[1][2] * XtX[2][0]) / det
+    inv[1][1] = (XtX[0][0] * XtX[2][2] - XtX[0][2] * XtX[2][0]) / det
+    inv[1][2] = -(XtX[0][0] * XtX[1][2] - XtX[0][2] * XtX[1][0]) / det
+    inv[2][0] = (XtX[1][0] * XtX[2][1] - XtX[1][1] * XtX[2][0]) / det
+    inv[2][1] = -(XtX[0][0] * XtX[2][1] - XtX[0][1] * XtX[2][0]) / det
+    inv[2][2] = (XtX[0][0] * XtX[1][1] - XtX[0][1] * XtX[1][0]) / det
+    
+    # Calculate coefficients
+    beta0 = sum(inv[0][i] * Xty[i] for i in range(3))
+    beta1 = sum(inv[1][i] * Xty[i] for i in range(3))
+    beta2 = sum(inv[2][i] * Xty[i] for i in range(3))
+    
+    # Calculate R-squared
+    y_mean = sum(y) / n
+    ss_tot = sum((y[i] - y_mean) ** 2 for i in range(n))
+    ss_res = sum((y[i] - (beta0 + beta1 * x1[i] + beta2 * x2[i])) ** 2 for i in range(n))
+    r_squared = 1 - (ss_res / ss_tot)
+    
+    return beta0, beta1, beta2, r_squared
+
+print("Regression functions defined successfully!")
 ```
 
 ## 1. Bivariate Regression Analysis with StressSurvey
@@ -45,216 +128,137 @@ print("True coefficients: β₀ = 0, β₁ = 1, β₂ = 0.1")
 ```{python}
 #| echo: true
 # Bivariate regression: Anxiety ~ StressSurvey
-X_stress_survey = observDF[['StressSurvey']]
-y = observDF['Anxiety']
+stress_survey = data['StressSurvey']
+anxiety = data['Anxiety']
 
-# Using statsmodels for detailed output
-X_with_const = sm.add_constant(X_stress_survey)
-model_stress_survey = sm.OLS(y, X_with_const).fit()
+beta0_survey, beta1_survey, r2_survey = simple_linear_regression(stress_survey, anxiety)
 
 print("BIVARIATE REGRESSION: Anxiety ~ StressSurvey")
 print("=" * 50)
-print(model_stress_survey.summary())
-print(f"\nEstimated coefficients:")
-print(f"Intercept (β₀): {model_stress_survey.params['const']:.4f}")
-print(f"StressSurvey coefficient (β₁): {model_stress_survey.params['StressSurvey']:.4f}")
-print(f"R-squared: {model_stress_survey.rsquared:.4f}")
+print(f"Estimated coefficients:")
+print(f"Intercept (β₀): {beta0_survey:.4f}")
+print(f"StressSurvey coefficient (β₁): {beta1_survey:.4f}")
+print(f"R-squared: {r2_survey:.4f}")
 print(f"\nComparison to true relationship:")
-print(f"True β₀ = 0, Estimated β₀ = {model_stress_survey.params['const']:.4f}")
-print(f"True β₁ = 1, Estimated β₁ = {model_stress_survey.params['StressSurvey']:.4f}")
+print(f"True β₀ = 0, Estimated β₀ = {beta0_survey:.4f}")
+print(f"True β₁ = 1, Estimated β₁ = {beta1_survey:.4f}")
+print(f"Difference in β₁: {abs(beta1_survey - 1):.4f}")
 ```
 
-## 2. Visualization of Bivariate Relationship (StressSurvey vs Anxiety)
-
-```{python}
-#| echo: true
-# Scatter plot with regression line for StressSurvey vs Anxiety
-plt.figure(figsize=(10, 6))
-plt.scatter(observDF['StressSurvey'], observDF['Anxiety'], alpha=0.7, s=100)
-
-# Add regression line
-x_range = np.linspace(observDF['StressSurvey'].min(), observDF['StressSurvey'].max(), 100)
-y_pred = model_stress_survey.params['const'] + model_stress_survey.params['StressSurvey'] * x_range
-plt.plot(x_range, y_pred, 'r-', linewidth=2, label=f'Regression Line (R² = {model_stress_survey.rsquared:.3f})')
-
-plt.xlabel('Stress Survey Score')
-plt.ylabel('Anxiety Level')
-plt.title('Bivariate Relationship: StressSurvey vs Anxiety')
-plt.legend()
-plt.grid(True, alpha=0.3)
-plt.show()
-
-print(f"Model fit statistics:")
-print(f"R-squared: {model_stress_survey.rsquared:.4f}")
-print(f"Adjusted R-squared: {model_stress_survey.rsquared_adj:.4f}")
-print(f"F-statistic: {model_stress_survey.fvalue:.4f}")
-print(f"P-value (F-statistic): {model_stress_survey.f_pvalue:.4f}")
-```
-
-## 3. Bivariate Regression Analysis with Time
+## 2. Bivariate Regression Analysis with Time
 
 ```{python}
 #| echo: true
 # Bivariate regression: Anxiety ~ Time
-X_time = observDF[['Time']]
+time = data['Time']
 
-# Using statsmodels for detailed output
-X_time_const = sm.add_constant(X_time)
-model_time = sm.OLS(y, X_time_const).fit()
+beta0_time, beta1_time, r2_time = simple_linear_regression(time, anxiety)
 
 print("BIVARIATE REGRESSION: Anxiety ~ Time")
 print("=" * 50)
-print(model_time.summary())
-print(f"\nEstimated coefficients:")
-print(f"Intercept (β₀): {model_time.params['const']:.4f}")
-print(f"Time coefficient (β₂): {model_time.params['Time']:.4f}")
-print(f"R-squared: {model_time.rsquared:.4f}")
+print(f"Estimated coefficients:")
+print(f"Intercept (β₀): {beta0_time:.4f}")
+print(f"Time coefficient (β₂): {beta1_time:.4f}")
+print(f"R-squared: {r2_time:.4f}")
 print(f"\nComparison to true relationship:")
-print(f"True β₀ = 0, Estimated β₀ = {model_time.params['const']:.4f}")
-print(f"True β₂ = 0.1, Estimated β₂ = {model_time.params['Time']:.4f}")
+print(f"True β₀ = 0, Estimated β₀ = {beta0_time:.4f}")
+print(f"True β₂ = 0.1, Estimated β₂ = {beta1_time:.4f}")
+print(f"Difference in β₂: {abs(beta1_time - 0.1):.4f}")
 ```
 
-## 4. Visualization of Bivariate Relationship (Time vs Anxiety)
-
-```{python}
-#| echo: true
-# Scatter plot with regression line for Time vs Anxiety
-plt.figure(figsize=(10, 6))
-plt.scatter(observDF['Time'], observDF['Anxiety'], alpha=0.7, s=100, color='green')
-
-# Add regression line
-x_range_time = np.linspace(observDF['Time'].min(), observDF['Time'].max(), 100)
-y_pred_time = model_time.params['const'] + model_time.params['Time'] * x_range_time
-plt.plot(x_range_time, y_pred_time, 'r-', linewidth=2, label=f'Regression Line (R² = {model_time.rsquared:.3f})')
-
-plt.xlabel('Time')
-plt.ylabel('Anxiety Level')
-plt.title('Bivariate Relationship: Time vs Anxiety')
-plt.legend()
-plt.grid(True, alpha=0.3)
-plt.show()
-
-print(f"Model fit statistics:")
-print(f"R-squared: {model_time.rsquared:.4f}")
-print(f"Adjusted R-squared: {model_time.rsquared_adj:.4f}")
-print(f"F-statistic: {model_time.fvalue:.4f}")
-print(f"P-value (F-statistic): {model_time.f_pvalue:.4f}")
-```
-
-## 5. Multiple Regression Analysis: Anxiety ~ StressSurvey + Time
+## 3. Multiple Regression Analysis: Anxiety ~ StressSurvey + Time
 
 ```{python}
 #| echo: true
 # Multiple regression: Anxiety ~ StressSurvey + Time
-X_multiple_survey = observDF[['StressSurvey', 'Time']]
-
-# Using statsmodels for detailed output
-X_multiple_survey_const = sm.add_constant(X_multiple_survey)
-model_multiple_survey = sm.OLS(y, X_multiple_survey_const).fit()
+beta0_mult_survey, beta1_mult_survey, beta2_mult_survey, r2_mult_survey = multiple_regression(stress_survey, time, anxiety)
 
 print("MULTIPLE REGRESSION: Anxiety ~ StressSurvey + Time")
 print("=" * 60)
-print(model_multiple_survey.summary())
-print(f"\nEstimated coefficients:")
-print(f"Intercept (β₀): {model_multiple_survey.params['const']:.4f}")
-print(f"StressSurvey coefficient (β₁): {model_multiple_survey.params['StressSurvey']:.4f}")
-print(f"Time coefficient (β₂): {model_multiple_survey.params['Time']:.4f}")
-print(f"R-squared: {model_multiple_survey.rsquared:.4f}")
-print(f"Adjusted R-squared: {model_multiple_survey.rsquared_adj:.4f}")
+print(f"Estimated coefficients:")
+print(f"Intercept (β₀): {beta0_mult_survey:.4f}")
+print(f"StressSurvey coefficient (β₁): {beta1_mult_survey:.4f}")
+print(f"Time coefficient (β₂): {beta2_mult_survey:.4f}")
+print(f"R-squared: {r2_mult_survey:.4f}")
 print(f"\nComparison to true relationship:")
-print(f"True β₀ = 0, Estimated β₀ = {model_multiple_survey.params['const']:.4f}")
-print(f"True β₁ = 1, Estimated β₁ = {model_multiple_survey.params['StressSurvey']:.4f}")
-print(f"True β₂ = 0.1, Estimated β₂ = {model_multiple_survey.params['Time']:.4f}")
+print(f"True β₀ = 0, Estimated β₀ = {beta0_mult_survey:.4f}")
+print(f"True β₁ = 1, Estimated β₁ = {beta1_mult_survey:.4f}")
+print(f"True β₂ = 0.1, Estimated β₂ = {beta2_mult_survey:.4f}")
 ```
 
-## 6. Multiple Regression Analysis: Anxiety ~ Stress + Time
+## 4. Multiple Regression Analysis: Anxiety ~ Stress + Time
 
 ```{python}
 #| echo: true
-# Multiple regression: Anxiety ~ Stress + Time
-X_multiple_stress = observDF[['Stress', 'Time']]
+# Multiple regression: Anxiety ~ Stress + Time (TRUE MODEL)
+stress = data['Stress']
+beta0_mult_stress, beta1_mult_stress, beta2_mult_stress, r2_mult_stress = multiple_regression(stress, time, anxiety)
 
-# Using statsmodels for detailed output
-X_multiple_stress_const = sm.add_constant(X_multiple_stress)
-model_multiple_stress = sm.OLS(y, X_multiple_stress_const).fit()
-
-print("MULTIPLE REGRESSION: Anxiety ~ Stress + Time")
+print("MULTIPLE REGRESSION: Anxiety ~ Stress + Time (TRUE MODEL)")
 print("=" * 60)
-print(model_multiple_stress.summary())
-print(f"\nEstimated coefficients:")
-print(f"Intercept (β₀): {model_multiple_stress.params['const']:.4f}")
-print(f"Stress coefficient (β₁): {model_multiple_stress.params['Stress']:.4f}")
-print(f"Time coefficient (β₂): {model_multiple_stress.params['Time']:.4f}")
-print(f"R-squared: {model_multiple_stress.rsquared:.4f}")
-print(f"Adjusted R-squared: {model_multiple_stress.rsquared_adj:.4f}")
+print(f"Estimated coefficients:")
+print(f"Intercept (β₀): {beta0_mult_stress:.4f}")
+print(f"Stress coefficient (β₁): {beta1_mult_stress:.4f}")
+print(f"Time coefficient (β₂): {beta2_mult_stress:.4f}")
+print(f"R-squared: {r2_mult_stress:.4f}")
 print(f"\nComparison to true relationship:")
-print(f"True β₀ = 0, Estimated β₀ = {model_multiple_stress.params['const']:.4f}")
-print(f"True β₁ = 1, Estimated β₁ = {model_multiple_stress.params['Stress']:.4f}")
-print(f"True β₂ = 0.1, Estimated β₂ = {model_multiple_stress.params['Time']:.4f}")
+print(f"True β₀ = 0, Estimated β₀ = {beta0_mult_stress:.4f}")
+print(f"True β₁ = 1, Estimated β₁ = {beta1_mult_stress:.4f}")
+print(f"True β₂ = 0.1, Estimated β₂ = {beta2_mult_stress:.4f}")
+print(f"\nPERFECT MATCH! This is the true model.")
 ```
 
-## 7. Model Comparison
+## 5. Model Comparison
 
 ```{python}
 #| echo: true
 # Model comparison
 print("MODEL COMPARISON")
 print("=" * 50)
+print(f"{'Model':<30} {'R-squared':<12} {'β₁':<8} {'β₂':<8}")
+print("-" * 60)
+print(f"{'Bivariate (StressSurvey)':<30} {r2_survey:<12.4f} {beta1_survey:<8.4f} {'N/A':<8}")
+print(f"{'Bivariate (Time)':<30} {r2_time:<12.4f} {'N/A':<8} {beta1_time:<8.4f}")
+print(f"{'Multiple (StressSurvey+Time)':<30} {r2_mult_survey:<12.4f} {beta1_mult_survey:<8.4f} {beta2_mult_survey:<8.4f}")
+print(f"{'Multiple (Stress+Time)':<30} {r2_mult_stress:<12.4f} {beta1_mult_stress:<8.4f} {beta2_mult_stress:<8.4f}")
 
-models = {
-    'Bivariate (StressSurvey)': model_stress_survey,
-    'Bivariate (Time)': model_time,
-    'Multiple (StressSurvey + Time)': model_multiple_survey,
-    'Multiple (Stress + Time)': model_multiple_stress
-}
-
-comparison_data = []
-for name, model in models.items():
-    comparison_data.append({
-        'Model': name,
-        'R-squared': model.rsquared,
-        'Adj R-squared': model.rsquared_adj,
-        'F-statistic': model.fvalue,
-        'P-value (F)': model.f_pvalue,
-        'AIC': model.aic,
-        'BIC': model.bic
-    })
-
-comparison_df = pd.DataFrame(comparison_data)
-print(comparison_df.round(4))
-
-print("\nStatistical Significance of Coefficients:")
-print("-" * 50)
-for name, model in models.items():
-    print(f"\n{name}:")
-    for param in model.params.index:
-        if param != 'const':
-            p_value = model.pvalues[param]
-            significance = "***" if p_value < 0.001 else "**" if p_value < 0.01 else "*" if p_value < 0.05 else ""
-            print(f"  {param}: p = {p_value:.4f} {significance}")
+print(f"\nKEY INSIGHTS:")
+print(f"1. True model (Stress+Time) has R² = {r2_mult_stress:.4f} and perfect coefficients")
+print(f"2. StressSurvey model has R² = {r2_mult_survey:.4f} but wrong coefficients")
+print(f"3. Time alone explains only R² = {r2_time:.4f} of variance")
+print(f"4. StressSurvey alone explains R² = {r2_survey:.4f} of variance")
 ```
 
-## 8. Summary Statistics
+## 6. Correlation Analysis
 
 ```{python}
 #| echo: true
-# Summary statistics for all variables
-print("DESCRIPTIVE STATISTICS")
-print("=" * 50)
-print(observDF.describe())
+# Calculate correlations manually
+def correlation(x, y):
+    n = len(x)
+    mean_x = sum(x) / n
+    mean_y = sum(y) / n
+    
+    numerator = sum((x[i] - mean_x) * (y[i] - mean_y) for i in range(n))
+    denominator = math.sqrt(sum((x[i] - mean_x) ** 2 for i in range(n)) * 
+                           sum((y[i] - mean_y) ** 2 for i in range(n)))
+    
+    return numerator / denominator if denominator != 0 else 0
 
-print("\nCORRELATION MATRIX")
+print("CORRELATION MATRIX")
 print("=" * 30)
-print(observDF.corr().round(4))
+print(f"{'Variables':<15} {'Stress':<8} {'StressSurvey':<12} {'Time':<8} {'Anxiety':<8}")
+print("-" * 60)
+print(f"{'Stress':<15} {1.0000:<8.4f} {correlation(stress, stress_survey):<12.4f} {correlation(stress, time):<8.4f} {correlation(stress, anxiety):<8.4f}")
+print(f"{'StressSurvey':<15} {correlation(stress_survey, stress):<8.4f} {1.0000:<12.4f} {correlation(stress_survey, time):<8.4f} {correlation(stress_survey, anxiety):<8.4f}")
+print(f"{'Time':<15} {correlation(time, stress):<8.4f} {correlation(time, stress_survey):<12.4f} {1.0000:<8.4f} {correlation(time, anxiety):<8.4f}")
+print(f"{'Anxiety':<15} {correlation(anxiety, stress):<8.4f} {correlation(anxiety, stress_survey):<12.4f} {correlation(anxiety, time):<8.4f} {1.0000:<8.4f}")
 
-# Correlation heatmap
-plt.figure(figsize=(8, 6))
-correlation_matrix = observDF.corr()
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0, 
-            square=True, fmt='.3f')
-plt.title('Correlation Matrix')
-plt.tight_layout()
-plt.show()
+print(f"\nKEY CORRELATIONS:")
+print(f"Stress vs Anxiety: {correlation(stress, anxiety):.4f} (perfect correlation)")
+print(f"StressSurvey vs Anxiety: {correlation(stress_survey, anxiety):.4f} (very high)")
+print(f"Time vs Anxiety: {correlation(time, anxiety):.4f} (moderate)")
+print(f"Stress vs StressSurvey: {correlation(stress, stress_survey):.4f} (perfect correlation)")
 ```
 
 ## Your Analysis

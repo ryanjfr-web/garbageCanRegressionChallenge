@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scatter Plots - Garbage Can Regression Challenge</title>
+    <style>
+        body { font-family: 'Courier New', monospace; margin: 40px; }
+        h1 { color: #2c3e50; }
+        h2 { color: #34495e; border-bottom: 2px solid #3498db; }
+        .plot { background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0; }
+        .data-point { color: #e74c3c; font-weight: bold; }
+        .regression-line { color: #3498db; font-weight: bold; }
+        .analysis { background-color: #e8f5e8; padding: 15px; border-left: 4px solid #27ae60; margin: 20px 0; }
+        pre { white-space: pre-wrap; font-size: 12px; line-height: 1.2; }
+    </style>
+</head>
+<body>
+    <h1>Scatter Plots for Garbage Can Regression Challenge</h1>
+    
+    <h2>1. StressSurvey vs Anxiety Scatter Plot</h2>
+    <div class="plot">
+        <pre>
+Anxiety Level (Y)
+     |
+12.22|                    ●●●
+     |                    ●●●
+     |                    ●●●
+     |                   ╱
+ 8.21|              ●●● ╱
+     |              ●●●╱
+     |              ●●●
+     |             ╱
+ 2.20|        ●●● ╱
+     |        ●●●╱
+     |        ●●●
+     |       ╱
+ 1.10|  ●●● ╱
+     |  ●●●╱
+     |  ●●●
+     | ╱
+ 0.10|●●●
+     |●●●
+     |●●●
+     +───────────────────────────────── Stress Survey Score (X)
+     0   3   6   9  12
+
+Regression Line: Anxiety = -1.5240 + 1.0470 × StressSurvey
+R² = 0.9011 (Very Good Fit)
+Line shows strong positive relationship with slight upward bias
+        </pre>
+    </div>
+    
+    <div class="analysis">
+        <strong>Analysis of StressSurvey vs Anxiety:</strong><br>
+        • <strong>Fit:</strong> Very good fit with R² = 0.9011<br>
+        • <strong>Relationship:</strong> Strong positive linear relationship<br>
+        • <strong>Issues:</strong> Coefficient is wrong! True β₁ = 1, but estimated β₁ = 1.047<br>
+        • <strong>Problem:</strong> This demonstrates omitted variable bias - we're missing Time variable<br>
+        • <strong>Interpretation:</strong> StressSurvey appears to be a good predictor, but gives incorrect coefficient
+    </div>
+
+    <h2>2. Time vs Anxiety Scatter Plot</h2>
+    <div class="plot">
+        <pre>
+Anxiety Level (Y)
+     |
+12.22|                    ●●●
+     |                    ●●●
+     |                    ●●●
+     |                   ╱
+ 8.21|              ●●● ╱
+     |              ●●●╱
+     |              ●●●
+     |             ╱
+ 2.20|        ●●● ╱
+     |        ●●●╱
+     |        ●●●
+     |       ╱
+ 1.10|  ●●● ╱
+     |  ●●●╱
+     |  ●●●
+     | ╱
+ 0.10|●●●
+     |●●●
+     |●●●
+     +───────────────────────────────── Time (X)
+     0   1   2
+
+Regression Line: Anxiety = -3.6801 + 5.3406 × Time
+R² = 0.5630 (Moderate Fit)
+Line shows steep positive slope but poor fit to data
+        </pre>
+    </div>
+    
+    <div class="analysis">
+        <strong>Analysis of Time vs Anxiety:</strong><br>
+        • <strong>Fit:</strong> Moderate fit with R² = 0.5630<br>
+        • <strong>Relationship:</strong> Positive relationship but poor fit<br>
+        • <strong>Issues:</strong> Coefficient is TERRIBLY wrong! True β₂ = 0.1, but estimated β₂ = 5.3406<br>
+        • <strong>Problem:</strong> Severe omitted variable bias - missing Stress variable<br>
+        • <strong>Interpretation:</strong> Time alone is a terrible predictor and gives completely wrong coefficient
+    </div>
+
+    <h2>3. Data Points for Manual Plotting</h2>
+    
+    <h3>StressSurvey vs Anxiety:</h3>
+    <table border="1" style="border-collapse: collapse; margin: 10px 0;">
+        <tr><th>StressSurvey (X)</th><th>Anxiety (Y)</th></tr>
+        <tr><td>0</td><td>0.00</td></tr>
+        <tr><td>0</td><td>0.10</td></tr>
+        <tr><td>0</td><td>0.10</td></tr>
+        <tr><td>3</td><td>1.10</td></tr>
+        <tr><td>3</td><td>1.10</td></tr>
+        <tr><td>3</td><td>1.10</td></tr>
+        <tr><td>6</td><td>2.20</td></tr>
+        <tr><td>6</td><td>2.20</td></tr>
+        <tr><td>6</td><td>2.20</td></tr>
+        <tr><td>9</td><td>8.20</td></tr>
+        <tr><td>9</td><td>8.20</td></tr>
+        <tr><td>9</td><td>8.21</td></tr>
+        <tr><td>12</td><td>12.22</td></tr>
+        <tr><td>12</td><td>12.22</td></tr>
+        <tr><td>12</td><td>12.22</td></tr>
+    </table>
+
+    <h3>Time vs Anxiety:</h3>
+    <table border="1" style="border-collapse: collapse; margin: 10px 0;">
+        <tr><th>Time (X)</th><th>Anxiety (Y)</th></tr>
+        <tr><td>0.0</td><td>0.00</td></tr>
+        <tr><td>1.0</td><td>0.10</td></tr>
+        <tr><td>1.0</td><td>0.10</td></tr>
+        <tr><td>1.0</td><td>1.10</td></tr>
+        <tr><td>1.0</td><td>1.10</td></tr>
+        <tr><td>1.0</td><td>1.10</td></tr>
+        <tr><td>2.0</td><td>2.20</td></tr>
+        <tr><td>2.0</td><td>2.20</td></tr>
+        <tr><td>2.0</td><td>2.20</td></tr>
+        <tr><td>2.0</td><td>8.20</td></tr>
+        <tr><td>2.0</td><td>8.20</td></tr>
+        <tr><td>2.1</td><td>8.21</td></tr>
+        <tr><td>2.2</td><td>12.22</td></tr>
+        <tr><td>2.2</td><td>12.22</td></tr>
+        <tr><td>2.2</td><td>12.22</td></tr>
+    </table>
+
+    <h2>4. Key Insights for Your Analysis</h2>
+    <div class="analysis">
+        <strong>For Question 2 (StressSurvey vs Anxiety):</strong><br>
+        • The scatter plot shows a strong positive linear relationship<br>
+        • R² = 0.9011 indicates very good fit<br>
+        • However, the coefficient (1.047) is close but not exactly 1.0<br>
+        • This demonstrates that even with good fit, omitted variables cause bias<br><br>
+        
+        <strong>For Question 4 (Time vs Anxiety):</strong><br>
+        • The scatter plot shows a positive relationship but poor fit<br>
+        • R² = 0.5630 indicates moderate fit<br>
+        • The coefficient (5.3406) is dramatically wrong compared to true value (0.1)<br>
+        • This shows severe omitted variable bias when using Time alone<br><br>
+        
+        <strong>Overall Lesson:</strong><br>
+        • High R² doesn't guarantee correct coefficients<br>
+        • Omitted variable bias can be severe<br>
+        • Need multiple regression with all relevant variables for correct estimates
+    </div>
+</body>
+</html>

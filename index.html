@@ -32,8 +32,8 @@
         StressSurvey coefficient (β₁): 1.0470<br>
         R-squared: 0.9011<br><br>
         <strong>Comparison to true relationship:</strong><br>
-        True β₀ = 0, Estimated β₀ = -1.5240 ❌<br>
-        True β₁ = 1, Estimated β₁ = 1.0470 (close but wrong)
+        True β₀ = 0, Estimated β₀ = -1.5240.❌ This value is no where close to the estimated value from the model. <br>
+        True β₁ = 1, Estimated β₁ = 1.0470 This prediction and true value are very close to each other. We see much higher accuracy for this beta value.
     </div>
 
     <h2>2. Scatter Plot: StressSurvey vs Anxiety</h2>
@@ -70,11 +70,11 @@ R² = 0.9011 (Very Good Fit)
     
     <div class="analysis">
         <strong>Analysis of StressSurvey vs Anxiety:</strong><br>
-        • <strong>Fit:</strong> Very good fit with R² = 0.9011<br>
-        • <strong>Relationship:</strong> Strong positive linear relationship<br>
-        • <strong>Issues:</strong> Coefficient is wrong! True β₁ = 1, but estimated β₁ = 1.047<br>
-        • <strong>Problem:</strong> This demonstrates omitted variable bias - we're missing Time variable<br>
-        • <strong>Interpretation:</strong> StressSurvey appears to be a good predictor, but gives incorrect coefficient
+        • <strong>Fit:</strong> Although we saw a very deviated value of beta β₀, the model still has a very good fit with R² = 0.9011<br>
+        • <strong>Relationship:</strong> This shows a strong positive linear relationship<br>
+        • <strong>Issues with the model:</strong> The StressSurvey coefficient is wrong True β₁ = 1, but it was estimated at β₁ = 1.047<br>
+        • <strong>What went wrong:</strong> This demonstrates omitted variable bias. We are missing the time variable, which is a necessary component for the model.<br>
+        • <strong>StressSurvey strength:</strong> StressSurvey appears to be a good predictor based on the scatter plot and R^2 value, but the incorrect coefficient raises concerns.
     </div>
 
     <h2>3. Bivariate Regression Analysis with Time</h2>
@@ -84,8 +84,8 @@ R² = 0.9011 (Very Good Fit)
         Time coefficient (β₂): 5.3406<br>
         R-squared: 0.5630<br><br>
         <strong>Comparison to true relationship:</strong><br>
-        True β₀ = 0, Estimated β₀ = -3.6801 ❌<br>
-        True β₂ = 0.1, Estimated β₂ = 5.3406 (TERRIBLY WRONG!)
+        True β₀ = 0, Estimated β₀ = -3.6801 ❌ This value is no where close to the estimated value. It is almost 4x times the true value.<br>
+        True β₂ = 0.1, Estimated β₂ = 5.3406 This value is the farther from the true value that we have seen so far. It is almost 53x times the true value.
     </div>
 
     <h2>4. Scatter Plot: Time vs Anxiety</h2>
@@ -122,11 +122,11 @@ R² = 0.5630 (Moderate Fit)
     
     <div class="analysis">
         <strong>Analysis of Time vs Anxiety:</strong><br>
-        • <strong>Fit:</strong> Moderate fit with R² = 0.5630<br>
-        • <strong>Relationship:</strong> Positive relationship but poor fit<br>
-        • <strong>Issues:</strong> Coefficient is TERRIBLY wrong! True β₂ = 0.1, but estimated β₂ = 5.3406<br>
-        • <strong>Problem:</strong> Severe omitted variable bias - missing Stress variable<br>
-        • <strong>Interpretation:</strong> Time alone is a terrible predictor and gives completely wrong coefficient
+        • <strong>Fit:</strong>Moderately poor fit with R² = 0.5630. Would not recommend using this model for any predicitions or interpretations.<br>
+        • <strong>Relationship:</strong> Positive relationship but still a poor fit.<br>
+        • <strong>Issues with model:</strong> The intercept and coefficient are both significantly wrong. β₀ and β₂ are both very far from the predicted values.<br>
+        • <strong>What went wrong:</strong> This demonstrates omitted variable bias. We are missing the Stress variable, which is a necessary component for the model.<br>
+        • <strong>Time strength:</strong> Time alone is a terrible predictor and gives a completely wrong coefficient
     </div>
 
     <h2>5. Multiple Regression Analysis: Anxiety ~ StressSurvey + Time</h2>
@@ -140,7 +140,7 @@ R² = 0.5630 (Moderate Fit)
         True β₀ = 0, Estimated β₀ = 0.5888 ❌<br>
         True β₁ = 1, Estimated β₁ = 1.4269 ❌<br>
         True β₂ = 0.1, Estimated β₂ = -2.7799 ❌<br>
-        <strong>ALL COEFFICIENTS WRONG!</strong>
+        <strong>We can see that all the coefficients are wrong. The estimated values are not even close to the true values. This model would most liekly not be a good predictor for the data.</strong>
     </div>
 
     <h2>6. Multiple Regression Analysis: Anxiety ~ Stress + Time (TRUE MODEL)</h2>
@@ -154,14 +154,14 @@ R² = 0.5630 (Moderate Fit)
         True β₀ = 0, Estimated β₀ = -0.0000 ✅<br>
         True β₁ = 1, Estimated β₁ = 1.0000 ✅<br>
         True β₂ = 0.1, Estimated β₂ = 0.1000 ✅<br>
-        <strong>PERFECT MATCH! This is the true model.</strong>
+        <strong> All three of the coefficients are a perfect match. This is a representation of the true model.</strong>
     </div>
 
     <h2>7. Model Comparison</h2>
     <table>
-        <tr><th>Model</th><th>R-squared</th><th>β₁</th><th>β₂</th><th>Correct?</th></tr>
-        <tr><td>Bivariate (StressSurvey)</td><td>0.9011</td><td>1.0470</td><td>N/A</td><td>❌</td></tr>
-        <tr><td>Bivariate (Time)</td><td>0.5630</td><td>N/A</td><td>5.3406</td><td>❌</td></tr>
+        <tr><th>Model</th><th>R-squared</th><th>β₁</th><th>β₂</th><th> P value</th><th>Correct?</th></tr>
+        <tr><td>Bivariate (StressSurvey)</td><td>0.9011</td><td>1.0470</td><td>N/A</td><td>0.0000003</td><td>❌</td></tr>
+        <tr><td>Bivariate (Time)</td><td>0.5630</td><td>N/A</td><td>5.3406</td><td>0.00127</td><td>❌</td></tr>
         <tr><td>Multiple (StressSurvey+Time)</td><td>0.9350</td><td>1.4269</td><td>-2.7799</td><td>❌</td></tr>
         <tr><td>Multiple (Stress+Time)</td><td>1.0000</td><td>1.0000</td><td>0.1000</td><td>✅</td></tr>
     </table>
